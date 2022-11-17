@@ -16,14 +16,22 @@
         "artifactstoreb96ea463": {}
       },
       "api": {
-        "uploadFiles": {}
+        "uploadFiles": {},
+        "kendraSearch": {},
+        "neptuneSearch": {}
       },
       "storage": {
         "landingZone": {}
       },
       "function": {
-        "artifactStoreKendraSearch": {},
-        "artifactStoreNeptuneSearch": {}
+        "artifactStoreKendraSearch": {
+          "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",
+          "s3Key": "amplify-builds/artifactStoreKendraSearch-6f467372427070435933-build.zip"
+        },
+        "artifactStoreNeptuneSearch": {
+          "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",
+          "s3Key": "amplify-builds/artifactStoreNeptuneSearch-725538372f5a784b3970-build.zip"
+        }
       }
     }
   }

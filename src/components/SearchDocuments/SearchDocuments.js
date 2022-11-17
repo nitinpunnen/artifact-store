@@ -7,7 +7,7 @@ const SearchDocuments = () => {
     const [resultItems, setResultItems] = useState([]);
 
     async function searchDocument(value) {
-        const response = await API.get('searchKendra', '/search', {
+        const response = await API.get('kendraSearch', '/search', {
             headers: {},
             response: true,
             queryStringParameters: {

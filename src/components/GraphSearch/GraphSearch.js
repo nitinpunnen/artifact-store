@@ -67,7 +67,7 @@ const GraphSearch = () => {
     });
 
     async function updateGraph(value) {
-        const response = await API.get('searchNeptune', '/search', {
+        const response = await API.get('neptuneSearch', '/search', {
             headers: {},
             response: true,
             queryStringParameters: {
