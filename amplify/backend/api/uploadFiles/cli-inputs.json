@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "uploadFiles",
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "API_KEY",
+      "expirationTime": 60,
+      "apiKeyExpirationDate": "2023-01-16T06:45:12.322Z",
+      "keyDescription": ""
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "resourceName": "landingZone",
+  "policyUUID": "1edee211",
+  "bucketName": "npunnen-artifactstore-landingzone",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

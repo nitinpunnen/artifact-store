@@ -1,0 +1,13 @@
+.result-list {
+    list-style: none;
+    padding: 0;
+}
+
+.custom-card {
+    width: 90% !important;
+    margin: 0 auto;
+    min-height: 60px !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important
+}

@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 .App-logo {
@@ -35,4 +35,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Navbar-Item {
+  text-decoration: none;
+  color: darkblue;
+}
+
+.Logo {
+  width: 42px;
+  height: 42px;
 }

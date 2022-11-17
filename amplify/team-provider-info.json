@@ -10,6 +10,21 @@
       "StackName": "amplify-artifactstore-dev-221642",
       "StackId": "arn:aws:cloudformation:us-west-2:758471554330:stack/amplify-artifactstore-dev-221642/68481280-663f-11ed-8e28-0a942182bd63",
       "AmplifyAppId": "d206z4oxrw1p6c"
+    },
+    "categories": {
+      "auth": {
+        "artifactstoreb96ea463": {}
+      },
+      "api": {
+        "uploadFiles": {}
+      },
+      "storage": {
+        "landingZone": {}
+      },
+      "function": {
+        "artifactStoreKendraSearch": {},
+        "artifactStoreNeptuneSearch": {}
+      }
     }
   }
 }
