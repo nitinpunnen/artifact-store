@@ -15,7 +15,7 @@ const SearchDocuments = () => {
             }
         });
         const resultItems = response.data.ResultItems;
-        console.log(resultItems);
+        console.log(response.data);
         setResultItems(resultItems);
     }
 
@@ -39,6 +39,7 @@ const SearchDocuments = () => {
                     onSubmit={(value) => searchDocument(value)}
                 />
             </Flex>
+            {resultItems.length > 0 &&
             <Flex
                 direction={{base: 'column', large: 'column'}}
                 padding="1rem"
@@ -52,7 +53,7 @@ const SearchDocuments = () => {
                                     padding="1rem"
                                     style={{display: "block", margin: "10px auto", textAlign: "left"}}
                                 >
-                                    <a href={item.DocumentURI}>{item.DocumentTitle.Text}</a>
+                                    <a rel="noreferrer" target="_blank" href={item.PreSignedURL}>{item.DocumentTitle.Text}</a>
                                     <Text>{item.DocumentExcerpt.Text}</Text>
                                 </Flex>
                             </Card>
@@ -60,6 +61,10 @@ const SearchDocuments = () => {
                     })}
                 </ul>
             </Flex>
+            }
+            {
+                resultItems.length <= 0 && <span>No Results</span>
+            }
         </Flex>
     );
 };

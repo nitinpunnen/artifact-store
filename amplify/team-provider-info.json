@@ -26,7 +26,7 @@
       "function": {
         "artifactStoreKendraSearch": {
           "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",
-          "s3Key": "amplify-builds/artifactStoreKendraSearch-6f467372427070435933-build.zip"
+          "s3Key": "amplify-builds/artifactStoreKendraSearch-61787342457136775442-build.zip"
         },
         "artifactStoreNeptuneSearch": {
           "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",

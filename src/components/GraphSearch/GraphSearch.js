@@ -1,11 +1,7 @@
 import React, {useState} from "react";
 import "./GraphSearch.css";
 import "@aws-amplify/ui-react/styles.css";
-import {
-    Flex,
-    Heading, SearchField, Table, TableBody, TableCell, TableRow, Text
-
-} from '@aws-amplify/ui-react';
+import {CheckboxField, Flex, Heading, SearchField, Table, TableBody, TableCell, TableRow} from '@aws-amplify/ui-react';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import {API} from "aws-amplify";
@@ -15,12 +11,15 @@ import location from "../../assets/location.png";
 import drawing from "../../assets/drawing.png";
 import part from "../../assets/part.png";
 import document from "../../assets/document.png";
+import supplier from "../../assets/supplier.png";
 // Load Highcharts modules
 require('highcharts/modules/networkgraph')(Highcharts);
 
 const GraphSearch = () => {
-    const [resultItems, setResultItems] = useState([{}]);
+    const [resultItems, setResultItems] = useState([]);
     const [selectedNode, setSelectedNode] = useState('');
+    const [relationNames, setRelationNames] = useState([{}]);
+    const [checked, setChecked] = useState([{}]);
     const [chartOptions, setChartOptions] = useState({
         chart: {
             type: "networkgraph",
@@ -40,7 +39,7 @@ const GraphSearch = () => {
                 point: {
                     events: {
                         click: (e) => {
-                            updateGraph(e.point.id);
+                            CallSearch(e.point.id);
                             setSelectedNode(e.point.id);
                         }
                     },
@@ -58,55 +57,68 @@ const GraphSearch = () => {
                     allowOverlap: false,
                     y: -10
                 },
-                data: [
-                ],
-                nodes: [{
-                }]
+                data: [],
+                nodes: [{}]
             }
         ]
     });
 
-    async function updateGraph(value) {
+    async function CallSearch(value) {
         const response = await API.get('neptuneSearch', '/search', {
             headers: {},
             response: true,
             queryStringParameters: {
-                query: value
+                entity: value
             }
         });
-        const resultItems = response.data;
-        setResultItems(resultItems);
-        console.log('resultItems is ', resultItems);
+        const responseData = response.data;
+        console.log('response data', responseData)
+        await UpdateGraph(responseData);
+        setResultItems(responseData);
 
+        let uniqueRelations = new Set();
+        responseData.map(item => {
+            if (item.relationship) {
+                uniqueRelations.add(item.relationship);
+            }
+        });
+        setRelationNames(Array.from(uniqueRelations));
+        setChecked(Array.from(uniqueRelations));
+    }
+
+    async function UpdateGraph(responseData) {
         let networkData = [];
         let networkNode = [];
 
-        for (let i = 0; i < resultItems.length; i++) {
+        for (let i = 0; i < responseData.length; i++) {
             //Ignore the first Result Item to create the data. But need it for nodes
             if (i !== 0) {
                 const dataNode = {
-                    'from': resultItems[0].name[0],
-                    'to': resultItems[i].name[0],
-                    'label': resultItems[i].relationship};
+                    'from': responseData[0].name[0],
+                    'to': responseData[i].name[0],
+                    'label': responseData[i].relationship
+                };
                 networkData.push(dataNode);
             }
             let symbolUrl = null;
 
-            if (resultItems[i].label === 'organization')
+            if (responseData[i].label === 'customer')
                 symbolUrl = organization;
-            else if (resultItems[i].label === 'location')
+            else if (responseData[i].label === 'location')
                 symbolUrl = location;
-            else if (resultItems[i].label === 'person')
+            else if (responseData[i].label === 'person')
                 symbolUrl = person;
-            else if (resultItems[i].label === 'part')
+            else if (responseData[i].label === 'part')
                 symbolUrl = part;
-            else if (resultItems[i].label === 'drawing')
+            else if (responseData[i].label === 'supplier')
+                symbolUrl = supplier;
+            else if (responseData[i].label === 'drawing')
                 symbolUrl = drawing;
-            else if (resultItems[i].label === 'document')
+            else if (responseData[i].label === 'document')
                 symbolUrl = document;
 
             const nodeNode = {
-                id: resultItems[i].name[0], marker: {
+                id: responseData[i].name[0], marker: {
                     symbol: 'url(' + symbolUrl + ')',
                 }
             };
@@ -116,6 +128,19 @@ const GraphSearch = () => {
         chartOptions.series[0].data = networkData;
         chartOptions.series[0].nodes = networkNode;
         console.log('options is ', chartOptions);
+    }
+
+    async function handleChecked(event) {
+        let updatedList = [...checked];
+        if (event.target.checked) {
+            updatedList = [...checked, event.target.name];
+        } else {
+            updatedList.splice(checked.indexOf(event.target.name), 1);
+        }
+        setChecked(updatedList);
+        // First item (self) doesnt have relationship
+        const filteredResultItems = resultItems.filter(item => !item.hasOwnProperty('relationship') || updatedList.includes(item.relationship));
+        await UpdateGraph(filteredResultItems);
     }
 
     return (
@@ -138,28 +163,53 @@ const GraphSearch = () => {
                         setSelectedNode(event.target.value);
                     }}
                     value={selectedNode}
-                    onSubmit={(value) => updateGraph(value)}
+                    onSubmit={(value) => CallSearch(value)}
                 />
             </Flex>
-            <Flex direction={{base: 'row', large: 'row'}}
-                  padding="1rem"
-                  width="100%"
-                  style={{alignItems: "center"}}
+            {resultItems.length > 0 && resultItems[0].name && <Flex direction={{base: 'row', large: 'row'}}
+                                                                    padding="1rem"
+                                                                    width="100%"
+                                                                    style={{alignItems: "center"}}
             >
-                {(chartOptions.series[0].data.length > 0) && <HighchartsReact highcharts={Highcharts} options={chartOptions} containerProps={{
-                    style: {
-                        height: "600px",
-                        display: "block",
-                        width: "70%",
-                        margin: "0 auto",
-                    }
-                }}/>}
                 <Flex
                     direction={{base: 'column', large: 'column'}}
                     padding="1rem"
-                    width="30%"
+                    width="20%"
                     height="600px"
                 >
+                    <Heading level={6} style={{textAlign: "center", color: "#003181"}}>Filter Relations</Heading>
+                    <ul style={{textDecoration: 'none', listStyle: 'none'}}>
+                        {relationNames.map((name, index) => {
+                            return (
+                                <li key={index}>
+                                    <CheckboxField
+                                        name={name}
+                                        value="yes"
+                                        onChange={(e) => handleChecked(e)}
+                                        defaultChecked
+                                        label={name}
+                                    />
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </Flex>
+                {(chartOptions.series[0].data.length > 0) &&
+                    <HighchartsReact highcharts={Highcharts} options={chartOptions} containerProps={{
+                        style: {
+                            height: "600px",
+                            display: "block",
+                            width: "60%",
+                            margin: "0 auto",
+                        }
+                    }}/>}
+                <Flex
+                    direction={{base: 'column', large: 'column'}}
+                    padding="1rem"
+                    width="20%"
+                    height="600px"
+                >
+                    <Heading level={6} style={{textAlign: "center", color: "#003181"}}>Attributes</Heading>
                     <Table
                         className="my-custom-table"
                         caption=""
@@ -180,7 +230,7 @@ const GraphSearch = () => {
                         </TableBody>
                     </Table>
                 </Flex>
-            </Flex>
+            </Flex>}
         </Flex>
 
     );

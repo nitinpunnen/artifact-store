@@ -33,21 +33,27 @@ def search_kendra(query):
         IndexId=index_id)
 
     for resultItem in result['ResultItems']:
-        documentId = resultItem["DocumentId"]
+        documentId = getS3DocumentId(resultItem)
         print("Nitin documentId is " + documentId)
-        bucketName = 's3://npunnen-artifactstore-landingzone85342-dev'
-        keyName = documentId.split(bucketName, 1)[1]
-        print("Nitin keyName is " + keyName)
+        bucketName = 'npunnen-artifactstore-landingzone221642-dev'
+        keyName = documentId.split(bucketName + '/', 1)[1]
         preSignedUrl = create_presigned_url(bucketName, keyName)
-        print("Nitin preSignedUrl is " + preSignedUrl)
         resultItem['PreSignedURL'] = preSignedUrl
 
     return result
 
 
+def getS3DocumentId(resultItem):
+    for attribute in resultItem['DocumentAttributes']:
+        if (attribute['Key'] == 's3_document_id'):
+            return attribute['Value']['StringValue']
+    documentId = resultItem["DocumentId"]
+    return documentId
+
+
 def create_presigned_url(bucket_name, object_name, expiration=3600):
     # Generate a presigned URL for the S3 object
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client('s3', region_name="us-west-2", config=boto3.session.Config(signature_version='s3v4', ))
     try:
         response = s3_client.generate_presigned_url('get_object',
                                                     Params={'Bucket': bucket_name,
