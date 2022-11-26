@@ -71,6 +71,20 @@
           ]
         }
       ]
+    },
+    "UploadedFilesAPI": {
+      "service": "API Gateway",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "artifactstoreListFiles",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        }
+      ]
     }
   },
   "storage": {
@@ -87,6 +101,11 @@
       "service": "Lambda"
     },
     "artifactStoreNeptuneSearch": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "artifactstoreListFiles": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"

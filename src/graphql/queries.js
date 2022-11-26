@@ -9,6 +9,7 @@ export const getArtifact = /* GraphQL */ `
       description
       createdBy
       department
+      classification
       fileUrl
       fileName
       createdAt
@@ -29,6 +30,7 @@ export const listArtifacts = /* GraphQL */ `
         description
         createdBy
         department
+        classification
         fileUrl
         fileName
         createdAt

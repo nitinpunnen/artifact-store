@@ -8,6 +8,7 @@ type Artifact @model @auth(rules: [ { allow: public } ] ){
   description: String
   createdBy: String
   department: String
+  classification: String
   fileUrl: String
   fileName: String
 }

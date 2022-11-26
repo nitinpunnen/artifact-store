@@ -18,7 +18,8 @@
       "api": {
         "uploadFiles": {},
         "kendraSearch": {},
-        "neptuneSearch": {}
+        "neptuneSearch": {},
+        "UploadedFilesAPI": {}
       },
       "storage": {
         "landingZone": {}
@@ -31,6 +32,10 @@
         "artifactStoreNeptuneSearch": {
           "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",
           "s3Key": "amplify-builds/artifactStoreNeptuneSearch-725538372f5a784b3970-build.zip"
+        },
+        "artifactstoreListFiles": {
+          "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",
+          "s3Key": "amplify-builds/artifactstoreListFiles-53344755756d66384769-build.zip"
         }
       }
     }

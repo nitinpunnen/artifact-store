@@ -12,6 +12,7 @@ export const createArtifact = /* GraphQL */ `
       description
       createdBy
       department
+      classification
       fileUrl
       fileName
       createdAt
@@ -30,6 +31,7 @@ export const updateArtifact = /* GraphQL */ `
       description
       createdBy
       department
+      classification
       fileUrl
       fileName
       createdAt
@@ -48,6 +50,7 @@ export const deleteArtifact = /* GraphQL */ `
       description
       createdBy
       department
+      classification
       fileUrl
       fileName
       createdAt
