@@ -221,7 +221,12 @@ const GraphSearch = () => {
                                     name
                                 </TableCell>
                                 <TableCell>
-                                    <strong>{resultItems[0]['name']}</strong>
+                                    {resultItems[0]['label'] === 'document' && (
+                                        <a target='_blank' href={resultItems[0]['PreSignedURL']}>{resultItems[0]['name']}</a>
+                                    )}
+                                    {resultItems[0]['label'] !== 'document' && (
+                                        <strong>{resultItems[0]['name']}</strong>
+                                    )}
                                 </TableCell>
                             </TableRow>
                             <TableRow key='label'>
@@ -233,7 +238,7 @@ const GraphSearch = () => {
                                 </TableCell>
                             </TableRow>
                             {Object.keys(resultItems[0]).map(key => {
-                                if(key !== 'name' && key !== 'label') {
+                                if(key !== 'name' && key !== 'label' && key !== 'PreSignedURL') {
                                     return (
                                         <TableRow key={key}>
                                             <TableCell>
