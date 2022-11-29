@@ -31,7 +31,7 @@
         },
         "artifactStoreNeptuneSearch": {
           "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",
-          "s3Key": "amplify-builds/artifactStoreNeptuneSearch-725538372f5a784b3970-build.zip"
+          "s3Key": "amplify-builds/artifactStoreNeptuneSearch-6e6b6d716f4c47433433-build.zip"
         },
         "artifactstoreListFiles": {
           "deploymentBucketName": "amplify-artifactstore-dev-221642-deployment",

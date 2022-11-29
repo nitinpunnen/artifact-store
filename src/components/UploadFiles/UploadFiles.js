@@ -5,7 +5,7 @@ import {API, Storage} from 'aws-amplify';
 import {
     Button,
     Flex,
-    Heading,
+    Heading, SelectField,
     Table, TableBody, TableCell, TableHead, TableRow,
     TextField,
     View,
@@ -40,21 +40,27 @@ const UploadFiles = () => {
             })
         );
         setArtifacts(notesFromAPI);
-
-
     }
 
     async function uploadFiles(event) {
         event.preventDefault();
         for (const item of files) {
+            const itemDepartment = item.department != null ? item.department : 'corporate';
+            const itemClassification = item.classification != null ? item.classification : 'none';
+            let itemFilename;
+            if(itemClassification === 'none') itemFilename = itemDepartment + "/" + item.name;
+            else itemFilename = itemDepartment + "/" + itemClassification + "/" + item.name;
+
             const data = {
                 name: item.documentName == null ? item.name : item.documentName,
-                description: item.description,
-                fileName: item.name,
+                description: item.description != null ? item.description : 'Anycompany Artifact',
+                department: itemDepartment,
+                classification: itemClassification,
+                fileName: itemFilename,
             };
+            console.log('data', data.fileName)
             if (!!data.fileName) {
-                console.log("item is ", item);
-                await Storage.put(item.name, item, {
+                await Storage.put(data.fileName, item, {
                     metadata: data,
                     contentType: item.type
                 });
@@ -91,8 +97,9 @@ const UploadFiles = () => {
             width="90%"
             style={{display: "block", margin: "10px auto"}}
         >
-            <Heading level={3} style={{textAlign: "left"}}>Upload Files</Heading>
-            <View as="form" margin="3rem 0" onSubmit={uploadFiles}>
+            <Heading level={3} style={{textAlign: "left"}}>Artifacts</Heading>
+            <View as="form" style={{margin: "15px 0", padding: "15px", border: "1px solid lightgrey"}}
+                  onSubmit={uploadFiles}>
                 <Flex direction="row" alignItems="center" justifyContent="center"
                       style={{width: "70%", margin: "10px auto"}}>
                     <View
@@ -110,14 +117,15 @@ const UploadFiles = () => {
                     </Button>
                 </Flex>
                 <Table
-                    className="my-custom-table"
+                    className="upload-table"
                     caption=""
-                    cellPadding="30px"
                     highlightOnHover="true">
                     <TableHead>
                         <TableRow>
                             <TableCell as="th">File Name</TableCell>
                             <TableCell as="th">Document Name</TableCell>
+                            <TableCell as="th">Department</TableCell>
+                            <TableCell as="th">Classification</TableCell>
                             <TableCell as="th">Description</TableCell>
                             <TableCell as="th"></TableCell>
                         </TableRow>
@@ -132,6 +140,7 @@ const UploadFiles = () => {
                                     <TextField
                                         name="name"
                                         placeholder={item.name}
+                                        defaultValue={item.name}
                                         label="Document Name"
                                         labelHidden
                                         variation="quiet"
@@ -139,10 +148,38 @@ const UploadFiles = () => {
                                     />
                                 </TableCell>
                                 <TableCell>
+                                    <SelectField label="Department"
+                                                 name="department"
+                                                 labelHidden
+                                                 variation="quiet"
+                                                 defaultValue="corporate"
+                                                 onChange={(e) => item.department = e.target.value}
+                                    >
+                                        <option value="corporate">Corporate</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="engineering">Engineering</option>
+                                        <option value="quality">Quality</option>
+                                    </SelectField>
+                                </TableCell>
+                                <TableCell>
+                                    <SelectField label="Classification"
+                                                 name="classification"
+                                                 variation="quiet"
+                                                 labelHidden
+                                                 defaultValue="none"
+                                                 onChange={(e) => item.classification = e.target.value}
+                                    >
+                                        <option value="none">None</option>
+                                        <option value="secret">Secret</option>
+                                        <option value="topsecret">Top Secret</option>
+                                    </SelectField>
+                                </TableCell>
+                                <TableCell>
                                     <TextField
                                         name="description"
                                         placeholder="Add a short description"
                                         label="Short Description"
+                                        defaultValue="AnyCompany Artifact"
                                         labelHidden
                                         variation="quiet"
                                         onBlur={(e) => item.description = e.target.value}
@@ -159,10 +196,10 @@ const UploadFiles = () => {
                     </TableBody>
                 </Table>
             </View>
-            <Heading level={4}>Uploaded Files</Heading>
-            <View margin="3rem 0">
+            <Heading margin="3em 0 0 0" level={5}>Uploaded Files</Heading>
+            <View margin="2em 0 0 0">
                 <Table
-                    className="my-custom-table"
+                    className="upload-table"
                     caption=""
                     cellPadding="30px"
                     highlightOnHover="true">
@@ -170,6 +207,8 @@ const UploadFiles = () => {
                         <TableRow>
                             <TableCell as="th">File Name</TableCell>
                             <TableCell as="th">Document Name</TableCell>
+                            <TableCell as="th">Department</TableCell>
+                            <TableCell as="th">Classification</TableCell>
                             <TableCell as="th">Description</TableCell>
                             <TableCell as="th">Created At</TableCell>
                             <TableCell as="th">Action</TableCell>
@@ -182,6 +221,8 @@ const UploadFiles = () => {
                                 <TableCell>
                                     {note.name}
                                 </TableCell>
+                                <TableCell>{note.department}</TableCell>
+                                <TableCell>{note.classification}</TableCell>
                                 <TableCell>{note.description}</TableCell>
                                 <TableCell>{note.createdAt}</TableCell>
                                 <TableCell>

@@ -1,43 +1,67 @@
 const gremlin = require('gremlin');
+const {DriverRemoteConnection} = gremlin.driver;
+const {Graph} = gremlin.structure;
+const endpoint = process.env.NEPTUNE_CLUSTER_ENDPOINT;
+const port = process.env.NEPTUNE_PORT;
+// Use wss:// for secure connections. See https://docs.aws.amazon.com/neptune/latest/userguide/access-graph-ssl.html
+const dc = new DriverRemoteConnection(
+    `wss://${process.env.NEPTUNE_CLUSTER_ENDPOINT}:${process.env.NEPTUNE_PORT}/gremlin`, {mimeType: 'application/vnd.gremlin-v2.0+json'}
+);
+const graph = new Graph();
+const g = graph.traversal().withRemote(dc);
+const withTokens = '~tinkerpop.valueMap.tokens';
+
+const {getSignedUrl} = require("@aws-sdk/s3-request-presigner");
+const {S3Client, GetObjectCommand} = require("@aws-sdk/client-s3");
 
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
-    const { DriverRemoteConnection } = gremlin.driver;
-    const { Graph } = gremlin.structure;
-    const endpoint = process.env.NEPTUNE_CLUSTER_ENDPOINT;
-    const port = process.env.NEPTUNE_PORT;
-    // Use wss:// for secure connections. See https://docs.aws.amazon.com/neptune/latest/userguide/access-graph-ssl.html
-    const dc = new DriverRemoteConnection(
-        `wss://${process.env.NEPTUNE_CLUSTER_ENDPOINT}:${process.env.NEPTUNE_PORT}/gremlin`, { mimeType: 'application/vnd.gremlin-v2.0+json' }
-    );
-    const graph = new Graph();
-    const g = graph.traversal().withRemote(dc);
-    const withTokens = '~tinkerpop.valueMap.tokens';
 
     try {
         let data = [];
         console.log('Divia ', event)
         const {
-            query
+            entity,
+            level
         } = event.queryStringParameters || {};
-        console.log("query is ", query);
+        console.log("entity is ", entity);
 
         // Get the searched object into first array item
         const searchedNode = await g.V()
-            .has('name', query)
+            .has('name', entity)
             .valueMap()
             .with_(withTokens)
             .toList();
         data.push(searchedNode[0]);
 
+        //If label is a Document or a Drawing, get a Presigned URL
+        console.log(searchedNode);
+        console.log(searchedNode[0]['label']);
+        if (searchedNode[0]['label'] === 'document' || searchedNode[0]['label'] === 'drawing') {
+            const s3Bucket = searchedNode[0]['s3Bucket'][0];
+            const s3Key = searchedNode[0]['s3Key'][0];
+            console.log(s3Bucket);
+            console.log(s3Key);
+
+            const getParams = {
+                Bucket: s3Bucket,
+                Key: s3Key
+            }
+            const client = new S3Client({region: "us-west-2"});
+            const command = new GetObjectCommand(getParams);
+            const url = await getSignedUrl(client, command, {expiresIn: 3600});
+            console.log(url)
+            searchedNode[0]['PreSignedURL'] = url;
+        }
+
         const nodes = await g.V()
-            .has('name', query).both()
+            .has('name', entity).both()
             .valueMap()
             .with_(withTokens)
             .toList();
 
         const relations = await g.V()
-            .has('name', query).bothE()
+            .has('name', entity).bothE()
             .valueMap()
             .with_(withTokens)
             .toList();
@@ -53,8 +77,7 @@ exports.handler = async (event) => {
 
         dc.close();
         return formatResponse(data);
-    }
-    catch (error) {
+    } catch (error) {
         console.log('ERROR', error);
         dc.close();
     }

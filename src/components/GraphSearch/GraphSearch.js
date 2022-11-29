@@ -148,8 +148,9 @@ const GraphSearch = () => {
             direction={{base: 'column', large: 'column'}}
             padding="1rem"
             width="100%"
+            style={{display: "block", margin: "10px auto"}}
         >
-            <Heading level={4} style={{textAlign: "left"}}>Entity Search</Heading>
+            <Heading level={3} style={{textAlign: "left"}}>Entity Search</Heading>
             <Flex direction={{base: 'row', large: 'row'}}
                   padding="1rem"
                   width="50%"
@@ -215,18 +216,35 @@ const GraphSearch = () => {
                         caption=""
                         highlightOnHover="true">
                         <TableBody>
+                            <TableRow key='name'>
+                                <TableCell>
+                                    name
+                                </TableCell>
+                                <TableCell>
+                                    <strong>{resultItems[0]['name']}</strong>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow key='label'>
+                                <TableCell>
+                                    label
+                                </TableCell>
+                                <TableCell>
+                                    <strong>{resultItems[0]['label']}</strong>
+                                </TableCell>
+                            </TableRow>
                             {Object.keys(resultItems[0]).map(key => {
-                                return (
-                                    <TableRow key={key}>
-                                        <TableCell>
-                                            {key}
-                                        </TableCell>
-                                        <TableCell>
-                                            <strong>{resultItems[0][key]}</strong>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
+                                if(key !== 'name' && key !== 'label') {
+                                    return (
+                                        <TableRow key={key}>
+                                            <TableCell>
+                                                {key}
+                                            </TableCell>
+                                            <TableCell>
+                                                <strong>{resultItems[0][key]}</strong>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                }})}
                         </TableBody>
                     </Table>
                 </Flex>
