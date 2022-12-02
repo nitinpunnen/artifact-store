@@ -202,13 +202,14 @@ const UploadFiles = () => {
                     className="upload-table"
                     caption=""
                     cellPadding="30px"
+                    variation="striped"
                     highlightOnHover="true">
                     <TableHead>
                         <TableRow>
-                            <TableCell as="th">File Name</TableCell>
-                            <TableCell as="th">Document Name</TableCell>
                             <TableCell as="th">Department</TableCell>
                             <TableCell as="th">Classification</TableCell>
+                            <TableCell as="th">File Name</TableCell>
+                            <TableCell as="th">Document Name</TableCell>
                             <TableCell as="th">Description</TableCell>
                             <TableCell as="th">Created At</TableCell>
                             <TableCell as="th">Action</TableCell>
@@ -217,12 +218,12 @@ const UploadFiles = () => {
                     <TableBody>
                         {artifacts.map((note) => (
                             <TableRow key={note.id || note.name}>
+                                <TableCell>{note.department}</TableCell>
+                                <TableCell>{note.classification}</TableCell>
                                 <TableCell><a href={note.fileUrl}>{note.fileName}</a></TableCell>
                                 <TableCell>
                                     {note.name}
                                 </TableCell>
-                                <TableCell>{note.department}</TableCell>
-                                <TableCell>{note.classification}</TableCell>
                                 <TableCell>{note.description}</TableCell>
                                 <TableCell>{note.createdAt}</TableCell>
                                 <TableCell>

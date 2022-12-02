@@ -19,7 +19,6 @@ const Home = () => {
                 </video>
                 <div className="intro">
                     <Heading level={1} className="heading">Artifact Store</Heading>
-                    <span className="short-desc">At last, this is what you have been searching for.</span>
                     <span className="short-desc">Powerful search engine build on machine learning capabilities to provide you the contextual results you are searching for. </span>
                 </div>
             </Flex>
@@ -33,7 +32,7 @@ const Home = () => {
                           variation="outlined">
                         <FontAwesomeIcon icon={faUpload} size="2x" color="#22577A"/>
                         <Heading level={5}>Upload Files</Heading>
-                        <Text>Lorem ipsum dolum</Text>
+                        <Text>Securely upload your files into Cloud Storage.Organize the files for easy retrieval in a highly available and durable storage.</Text>
                     </Card>
                 </Link>
                 <Link to="/searchDocs">
@@ -42,7 +41,7 @@ const Home = () => {
                           variation="outlined">
                         <FontAwesomeIcon icon={faSearch} size="2x" color="#22577A"/>
                         <Heading level={5}>Search Documents</Heading>
-                        <Text>Lorem ipsum dolum</Text>
+                        <Text>Unified search experience across multiple structured and unstructured content repositories. Use natural language processing (NLP) to get highly accurate answers</Text>
                     </Card>
                 </Link>
                 <Link to="/searchEntities">
@@ -51,7 +50,7 @@ const Home = () => {
                           variation="outlined">
                         <FontAwesomeIcon icon={faDiagramProject} size="2x" color="#22577A"/>
                         <Heading level={5}>Search Entities</Heading>
-                        <Text>Lorem ipsum dolum</Text>
+                        <Text>Search for your enterprise entities in a fast, reliable, fully managed graph database service that work with highly connected datasets.</Text>
                     </Card>
                 </Link>
             </Flex>

@@ -32,7 +32,7 @@ const GraphSearch = () => {
             networkgraph: {
                 layoutAlgorithm: {
                     enableSimulation: true,
-                    gravitationalConstant: 0.2,
+                    gravitationalConstant: 0.8,
                     linkLength: 60,
                     friction: -0.9
                 },
@@ -150,7 +150,7 @@ const GraphSearch = () => {
             width="100%"
             style={{display: "block", margin: "10px auto"}}
         >
-            <Heading level={3} style={{textAlign: "left"}}>Entity Search</Heading>
+            <Heading level={4} style={{textAlign: "left"}}>Entity Search</Heading>
             <Flex direction={{base: 'row', large: 'row'}}
                   padding="1rem"
                   width="50%"
@@ -221,10 +221,10 @@ const GraphSearch = () => {
                                     name
                                 </TableCell>
                                 <TableCell>
-                                    {resultItems[0]['label'] === 'document' && (
+                                    {(resultItems[0]['label'] === 'document' || resultItems[0]['label'] === 'drawing') && (
                                         <a target='_blank' href={resultItems[0]['PreSignedURL']}>{resultItems[0]['name']}</a>
                                     )}
-                                    {resultItems[0]['label'] !== 'document' && (
+                                    {(resultItems[0]['label'] !== 'document' && resultItems[0]['label'] !== 'drawing') && (
                                         <strong>{resultItems[0]['name']}</strong>
                                     )}
                                 </TableCell>

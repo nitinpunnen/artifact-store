@@ -10,8 +10,8 @@ kendra = boto3.client("kendra")
 def handler(event, context):
     print("Received event: " + json.dumps(event, indent=2))
     query = event["queryStringParameters"]["query"]
-    print("Divia Query is " + query)
-    response = search_kendra(query)
+    attribute_filter = json.loads(event["queryStringParameters"]["attributeFilter"])
+    response = search_kendra(query, attribute_filter)
 
     return {
         'statusCode': 200,
@@ -24,13 +24,14 @@ def handler(event, context):
     }
 
 
-def search_kendra(query):
+def search_kendra(query, attribute_filter):
     # Provide the index ID
     index_id = "297e2f07-5a3c-4a6f-a127-47abb46cac36"
 
     result = kendra.query(
         QueryText=query,
-        IndexId=index_id)
+        IndexId=index_id,
+        AttributeFilter=attribute_filter)
 
     for resultItem in result['ResultItems']:
         documentId = getS3DocumentId(resultItem)
