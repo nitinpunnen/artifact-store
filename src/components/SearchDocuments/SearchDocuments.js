@@ -2,6 +2,24 @@ import React, {useState} from 'react';
 import './SearchDocuments.css';
 import {Card, CheckboxField, Flex, Heading, SearchField, SelectField} from "@aws-amplify/ui-react";
 import {API} from "aws-amplify";
+import {faThumbsDown, faThumbsUp} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
+const FeedbackButton = (props) => {
+    const [color, setColors] = useState("gray");
+    const [active, setActive] = useState(false);
+    const handleClickButton = () => {
+        setActive(true);
+        setColors("gray");
+        if (active === true) {
+            setActive(false);
+            setColors("darkblue");
+        }
+    };
+    return (
+        <FontAwesomeIcon icon={props.icon} color={color} style={{border: "1px solid gray", padding: "5px", borderRadius: "50%"}} onClick={() => handleClickButton()}/>
+    );
+};
 
 const SearchDocuments = () => {
     const [facetResults, setFacetResults] = useState([]);
@@ -184,8 +202,13 @@ const SearchDocuments = () => {
                                             style={{display: "block", margin: "10px auto", textAlign: "left"}}
                                         >
                                             <a rel="noreferrer" target="_blank"
-                                               href={item.PreSignedURL}>{item.DocumentTitle.Text}</a>
+                                               href={item.HrefUri}>{item.DocumentTitle.Text}</a>
                                             <div>{highLightText(item.DocumentExcerpt)}</div>
+                                            <Flex direction={{base: 'row'}}
+                                                  style={{margin: "15px auto 0 auto", justifyContent: "right"}}>
+                                                <FeedbackButton icon={faThumbsUp}/>
+                                                <FeedbackButton icon={faThumbsDown}/>
+                                            </Flex>
                                         </Flex>
                                     </Card>
                                 </li>;

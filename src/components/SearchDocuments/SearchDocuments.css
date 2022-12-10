@@ -15,3 +15,7 @@
 .amplify-checkbox__label {
     font-size: 13px;
 }
+
+.feedback-button {
+    color: gray;
+}

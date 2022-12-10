@@ -8,10 +8,11 @@ kendra = boto3.client("kendra")
 
 
 def handler(event, context):
-    print("Received event: " + json.dumps(event, indent=2))
     query = event["queryStringParameters"]["query"]
     attribute_filter = json.loads(event["queryStringParameters"]["attributeFilter"])
+    # attribute_filter = event["queryStringParameters"]["attributeFilter"]
     response = search_kendra(query, attribute_filter)
+    print(response)
 
     return {
         'statusCode': 200,
@@ -26,30 +27,40 @@ def handler(event, context):
 
 def search_kendra(query, attribute_filter):
     # Provide the index ID
-    index_id = "297e2f07-5a3c-4a6f-a127-47abb46cac36"
+    index_id = "792dcbad-4ed1-4411-bf71-ec045e2f46d8"
 
     result = kendra.query(
         QueryText=query,
         IndexId=index_id,
         AttributeFilter=attribute_filter)
 
+    # result = kendra.query(
+    #     QueryText=query,
+    #     IndexId=index_id)
+
     for resultItem in result['ResultItems']:
-        documentId = getS3DocumentId(resultItem)
-        print("Nitin documentId is " + documentId)
-        bucketName = 'npunnen-artifactstore-landingzone221642-dev'
-        keyName = documentId.split(bucketName + '/', 1)[1]
-        preSignedUrl = create_presigned_url(bucketName, keyName)
-        resultItem['PreSignedURL'] = preSignedUrl
+        response = getS3DocumentId(resultItem)
+        document_id = response[0]
+        is_s3_document = response[1]
+        if is_s3_document:
+            bucketName = 'npunnen-artifactstore-landingzone221642-dev'
+            keyName = document_id.split(bucketName + '/', 1)[1]
+            preSignedUrl = create_presigned_url(bucketName, keyName)
+            resultItem['HrefUri'] = preSignedUrl
+        else:
+            resultItem['HrefUri'] = resultItem["DocumentURI"]
 
     return result
 
 
 def getS3DocumentId(resultItem):
     for attribute in resultItem['DocumentAttributes']:
-        if (attribute['Key'] == 's3_document_id'):
-            return attribute['Value']['StringValue']
+        if attribute['Key'] == 's3_document_id':
+            # Return s3documentId and flag true since it is not a s3 document
+            return attribute['Value']['StringValue'], True
     documentId = resultItem["DocumentId"]
-    return documentId
+    # Return documentId and flag false since it is not a s3 document
+    return documentId, False
 
 
 def create_presigned_url(bucket_name, object_name, expiration=3600):
