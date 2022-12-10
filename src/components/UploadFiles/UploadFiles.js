@@ -3,7 +3,7 @@ import "./UploadFiles.css";
 import "@aws-amplify/ui-react/styles.css";
 import {API, Storage} from 'aws-amplify';
 import {
-    Button,
+    Button, CheckboxField,
     Flex,
     Heading, SelectField,
     Table, TableBody, TableCell, TableHead, TableRow,
@@ -29,26 +29,35 @@ const UploadFiles = () => {
 
     async function fetchArtifacts() {
         const apiData = await API.graphql({query: listArtifacts});
-        const notesFromAPI = apiData.data.listArtifacts.items;
+        const artifacts = apiData.data.listArtifacts.items;
         await Promise.all(
-            notesFromAPI.map(async (note) => {
-                if (note.fileName) {
-                    const url = await Storage.get(note.name);
-                    note.fileUrl = url;
+            artifacts.map(async (artifact) => {
+                if (artifact.fileName) {
+                    const url = await Storage.get(artifact.name);
+                    artifact.fileUrl = url;
                 }
-                return note;
+                return artifact;
             })
         );
-        setArtifacts(notesFromAPI);
+        artifacts.sort((a, b) => {
+            if (a.department > b.department) {
+                return 1
+            }
+            if (a.department < b.department) {
+                return -1
+            }
+            return 0;
+        });
+        setArtifacts(artifacts);
     }
 
     async function uploadFiles(event) {
         event.preventDefault();
         for (const item of files) {
-            const itemDepartment = item.department != null ? item.department : 'corporate';
-            const itemClassification = item.classification != null ? item.classification : 'none';
+            const itemDepartment = item.department != null ? item.department : 'Corporate';
+            const itemClassification = item.classification != null ? item.classification : 'None';
             let itemFilename;
-            if(itemClassification === 'none') itemFilename = itemDepartment + "/" + item.name;
+            if (itemClassification === 'None') itemFilename = itemDepartment + "/" + item.name;
             else itemFilename = itemDepartment + "/" + itemClassification + "/" + item.name;
 
             const data = {
@@ -127,6 +136,7 @@ const UploadFiles = () => {
                             <TableCell as="th">Department</TableCell>
                             <TableCell as="th">Classification</TableCell>
                             <TableCell as="th">Description</TableCell>
+                            <TableCell as="th">Encrypt?</TableCell>
                             <TableCell as="th"></TableCell>
                         </TableRow>
                     </TableHead>
@@ -152,13 +162,13 @@ const UploadFiles = () => {
                                                  name="department"
                                                  labelHidden
                                                  variation="quiet"
-                                                 defaultValue="corporate"
+                                                 defaultValue="Corporate"
                                                  onChange={(e) => item.department = e.target.value}
                                     >
-                                        <option value="corporate">Corporate</option>
-                                        <option value="finance">Finance</option>
-                                        <option value="engineering">Engineering</option>
-                                        <option value="quality">Quality</option>
+                                        <option value="Corporate">Corporate</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Quality">Quality</option>
                                     </SelectField>
                                 </TableCell>
                                 <TableCell>
@@ -166,12 +176,14 @@ const UploadFiles = () => {
                                                  name="classification"
                                                  variation="quiet"
                                                  labelHidden
-                                                 defaultValue="none"
+                                                 defaultValue="None"
                                                  onChange={(e) => item.classification = e.target.value}
                                     >
-                                        <option value="none">None</option>
-                                        <option value="secret">Secret</option>
-                                        <option value="topsecret">Top Secret</option>
+                                        <option value="None">None</option>
+                                        <option value="Confidential">Confidential</option>
+                                        <option value="Internal">Internal Only</option>
+                                        <option value="Sensitive">Sensitive</option>
+                                        <option value="Classified">Classified</option>
                                     </SelectField>
                                 </TableCell>
                                 <TableCell>
@@ -184,6 +196,12 @@ const UploadFiles = () => {
                                         variation="quiet"
                                         onBlur={(e) => item.description = e.target.value}
                                         style={{width: "400px"}}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <CheckboxField
+                                        name="encrypt"
+                                        value="no"
                                     />
                                 </TableCell>
                                 <TableCell>
@@ -216,18 +234,18 @@ const UploadFiles = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {artifacts.map((note) => (
-                            <TableRow key={note.id || note.name}>
-                                <TableCell>{note.department}</TableCell>
-                                <TableCell>{note.classification}</TableCell>
-                                <TableCell><a href={note.fileUrl}>{note.fileName}</a></TableCell>
+                        {artifacts.map((item) => (
+                            <TableRow key={item.id || item.name}>
+                                <TableCell>{item.department}</TableCell>
+                                <TableCell>{item.classification}</TableCell>
+                                <TableCell><a href={item.fileUrl}>{item.fileName}</a></TableCell>
                                 <TableCell>
-                                    {note.name}
+                                    {item.name}
                                 </TableCell>
-                                <TableCell>{note.description}</TableCell>
-                                <TableCell>{note.createdAt}</TableCell>
+                                <TableCell>{item.description}</TableCell>
+                                <TableCell>{item.createdAt}</TableCell>
                                 <TableCell>
-                                    <Button variation="link" onClick={() => deleteNote(note)}>
+                                    <Button variation="link" onClick={() => deleteNote(item)}>
                                         Delete note
                                     </Button>
                                 </TableCell>

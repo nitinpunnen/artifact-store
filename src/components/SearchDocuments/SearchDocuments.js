@@ -19,8 +19,11 @@ const SearchDocuments = () => {
                 attributeFilter: JSON.stringify(attributeFilter)
             }
         });
-        const facetResults = response.data.FacetResults;
+        console.log(response)
+        let facetResults = response.data.FacetResults;
+        facetResults = facetResults.filter(item => item.DocumentAttributeKey !== 's3_document_id')
         const resultItems = response.data.ResultItems;
+        console.log(resultItems)
         setResultItems(resultItems);
         setFacetResults(facetResults);
         setSearched(true);
@@ -153,15 +156,14 @@ const SearchDocuments = () => {
                     <Flex
                         direction={{base: 'column', large: 'column'}}
                         padding="1rem"
-                        style={{alignItems: "center", margin: "auto", display: "block"}}>
+                        style={{alignItems: "center", margin: "auto"}}>
                         <Flex
-                            direction={{base: 'row'}} style={{alignItems: "center", float: "right"}}>
+                            direction={{base: 'row'}} style={{width: "100%", alignItems: "center", justifyContent: "right"}}>
                             <span><strong>Sort</strong></span>
-                            <SelectField label="Department"
-                                         name="department"
+                            <SelectField name="department"
                                          labelHidden
                                          variation="quiet"
-                                         defaultValue="corporate"
+                                         defaultValue="relevance"
                                          onChange={(e) => handleSort()}
                             >
                                 <option value="relevance">Relevance</option>

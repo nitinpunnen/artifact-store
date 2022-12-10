@@ -36,9 +36,9 @@ const App = ({signOut}) => {
                 style={{alignItems: "center", margin: "0 auto"}}
             >
               <Link className="Navbar-Item" to="/">Home</Link>
-              <Link className="Navbar-Item" to="/uploadFiles">Upload Files</Link>
               <Link className="Navbar-Item" to="/searchDocs">Search Documents</Link>
               <Link className="Navbar-Item" to="/searchEntities">Find Entities</Link>
+              <Link className="Navbar-Item" to="/uploadFiles">Upload Files</Link>
             </Flex>
           </Flex>
           <Routes>

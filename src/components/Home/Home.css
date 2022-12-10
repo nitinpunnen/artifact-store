@@ -20,28 +20,36 @@
 
 .video-container {
     width: 100%;
-    height: 400px;
+    height: 300px;
     display: block;
     position: relative;
 }
 
 .video-bg {
     width: 100% !important;
-    height: 400px !important;
+    height: 300px !important;
     object-fit: fill;
     position: absolute;
     top: 0;
 }
 
+hr {
+    height: 8px;
+    background-image: linear-gradient(90deg, #fdfeff, darkblue, #fdfeff);
+    border: 0;
+    height: 1px;
+}
+
 .heading {
-    color: white !important;
+    color: darkblue;
 }
 
 .intro {
     position: absolute;
     top: 80px;
-    left: 80px;
-    color: white;
+    text-align: center;
+    width: 100%;
+    color: darkblue;
 }
 
 .short-desc {

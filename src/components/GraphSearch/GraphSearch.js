@@ -28,12 +28,15 @@ const GraphSearch = () => {
         title: {
             text: ""
         },
+        credits: {
+            enabled: false
+        },
         plotOptions: {
             networkgraph: {
                 layoutAlgorithm: {
                     enableSimulation: true,
-                    gravitationalConstant: 0.8,
-                    linkLength: 60,
+                    gravitationalConstant: 0.7,
+                    linkLength: 70,
                     friction: -0.9
                 },
                 point: {
@@ -43,6 +46,15 @@ const GraphSearch = () => {
                             setSelectedNode(e.point.id);
                         }
                     },
+                }
+            },
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'normal',
+                        fontSize: '13px'
+                    }
                 }
             }
         },
@@ -72,7 +84,6 @@ const GraphSearch = () => {
             }
         });
         const responseData = response.data;
-        console.log('response data', responseData)
         await UpdateGraph(responseData);
         setResultItems(responseData);
 
@@ -124,10 +135,9 @@ const GraphSearch = () => {
             };
             networkNode.push(nodeNode);
         }
-        console.log('networkNode is ', networkNode);
         chartOptions.series[0].data = networkData;
         chartOptions.series[0].nodes = networkNode;
-        console.log('options is ', chartOptions);
+        // console.log('options is ', chartOptions);
     }
 
     async function handleChecked(event) {
