@@ -54,6 +54,7 @@ const UploadFiles = () => {
     async function uploadFiles(event) {
         event.preventDefault();
         for (const item of files) {
+            console.log(item)
             const itemDepartment = item.department != null ? item.department : 'Corporate';
             const itemClassification = item.classification != null ? item.classification : 'None';
             let itemFilename;
@@ -67,17 +68,25 @@ const UploadFiles = () => {
                 classification: itemClassification,
                 fileName: itemFilename,
             };
-            console.log('data', data.fileName)
-            if (!!data.fileName) {
-                await Storage.put(data.fileName, item, {
-                    metadata: data,
-                    contentType: item.type
-                });
-            }
             await API.graphql({
                 query: createArtifactMutation,
                 variables: {input: data},
             });
+            if (!!data.fileName) {
+                const result = await Storage.put(data.fileName, item, {
+                    metadata: data,
+                    contentType: item.type
+                });
+                const documentId = 's3://npunnen-artifactstore-landingzone221642-dev/public/'+result.key
+                const metadataJson = {"DocumentId": documentId, "Attributes": {
+                        "s3_document_id": documentId,
+                        "_language_code": "en",
+                        "department": itemDepartment,
+                        "classification": itemClassification
+                    }}
+                // Bad Code. But this is a demo
+                await Storage.put(data.fileName+'.metadata.json', metadataJson);
+            }
         }
         await fetchArtifacts();
         event.target.reset();

@@ -33,6 +33,7 @@ def search_kendra(query, attribute_filter):
         QueryText=query,
         IndexId=index_id,
         AttributeFilter=attribute_filter)
+    print(result)
 
     # result = kendra.query(
     #     QueryText=query,
@@ -40,6 +41,7 @@ def search_kendra(query, attribute_filter):
 
     for resultItem in result['ResultItems']:
         response = getS3DocumentId(resultItem)
+        print(response)
         document_id = response[0]
         is_s3_document = response[1]
         if is_s3_document:

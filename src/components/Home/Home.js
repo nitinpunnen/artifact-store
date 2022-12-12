@@ -50,7 +50,7 @@ const Home = () => {
                     <Card borderRadius="medium"
                           variation="outlined">
                         <FontAwesomeIcon icon={faUpload} size="2x" color="#22577A"/>
-                        <Heading level={5}>Upload Files</Heading>
+                        <Heading level={5}>Manage Files</Heading>
                         <Text>Securely upload your files into Cloud Storage.Organize the files for easy retrieval in a highly available and durable storage.</Text>
                     </Card>
                 </Link>

@@ -17,7 +17,9 @@ const FeedbackButton = (props) => {
         }
     };
     return (
-        <FontAwesomeIcon icon={props.icon} color={color} style={{border: "1px solid gray", padding: "5px", borderRadius: "50%"}} onClick={() => handleClickButton()}/>
+        <FontAwesomeIcon icon={props.icon} color={color}
+                         style={{border: "1px solid gray", padding: "5px", borderRadius: "50%"}}
+                         onClick={() => handleClickButton()}/>
     );
 };
 
@@ -40,6 +42,7 @@ const SearchDocuments = () => {
         console.log(response)
         let facetResults = response.data.FacetResults;
         facetResults = facetResults.filter(item => item.DocumentAttributeKey !== 's3_document_id')
+        console.log('facetResults', facetResults)
         const resultItems = response.data.ResultItems;
         console.log(resultItems)
         setResultItems(resultItems);
@@ -91,16 +94,18 @@ const SearchDocuments = () => {
         } else {
             selectedFacets = selectedFacets.filter(facet => facet.facetKey !== facetKey);
         }
+        setSelectedFacets(selectedFacets);
+        console.log('selectedFacets', selectedFacets)
 
         const attributeFilter = {
-            "OrAllFilters": []
+            "AndAllFilters": []
         }
 
         selectedFacets.map(function (item) {
             const facetKey = item.facetKey;
             const facetName = item.facetName;
 
-            attributeFilter.OrAllFilters.push({
+            attributeFilter.AndAllFilters.push({
                 "EqualsTo": {
                     "Key": facetName,
                     "Value": {
@@ -109,11 +114,26 @@ const SearchDocuments = () => {
                 }
             })
         })
-        searchDocument("change", queryString, attributeFilter);
+        console.log('attributeFilter', attributeFilter)
+        await searchDocument("change", queryString, attributeFilter);
     }
 
     async function handleSort(event) {
 
+    }
+
+    function shouldSelectCheckbox(key, value) {
+        let shouldCheck = false;
+
+        selectedFacets.map(function (item) {
+            const facetKey = item.facetKey;
+            const facetName = item.facetName;
+
+            if (key === facetName && value === facetKey) {
+                shouldCheck = true
+            }
+        })
+        return shouldCheck
     }
 
     return (
@@ -161,6 +181,7 @@ const SearchDocuments = () => {
                                                     data-attributekey={item.DocumentAttributeKey}
                                                     name={countPair.DocumentAttributeValue.StringValue}
                                                     value="yes"
+                                                    checked={shouldSelectCheckbox(item.DocumentAttributeKey, countPair.DocumentAttributeValue.StringValue)}
                                                     onChange={(e) => handleChecked(e)}
                                                     label={countPair.DocumentAttributeValue.StringValue + " (" + countPair.Count + ")"}
                                                 />
@@ -174,9 +195,10 @@ const SearchDocuments = () => {
                     <Flex
                         direction={{base: 'column', large: 'column'}}
                         padding="1rem"
-                        style={{alignItems: "center", margin: "auto"}}>
+                        style={{alignItems: "center", margin: "0 auto"}}>
                         <Flex
-                            direction={{base: 'row'}} style={{width: "100%", alignItems: "center", justifyContent: "right"}}>
+                            direction={{base: 'row'}}
+                            style={{width: "100%", alignItems: "center", justifyContent: "right"}}>
                             <span><strong>Sort</strong></span>
                             <SelectField name="department"
                                          labelHidden
@@ -195,7 +217,7 @@ const SearchDocuments = () => {
                         <ul className="result-list">
                             {resultItems.map(function (item, index) {
                                 return <li key={index}>
-                                    <Card className="custom-card">
+                                    {item.Type === "DOCUMENT" && <Card className="custom-card">
                                         <Flex
                                             direction={{base: 'column', large: 'column'}}
                                             padding="1rem"
@@ -205,12 +227,28 @@ const SearchDocuments = () => {
                                                href={item.HrefUri}>{item.DocumentTitle.Text}</a>
                                             <div>{highLightText(item.DocumentExcerpt)}</div>
                                             <Flex direction={{base: 'row'}}
-                                                  style={{margin: "15px auto 0 auto", justifyContent: "right"}}>
+                                                  style={{margin: "15px 50px 0 auto", justifyContent: "right"}}>
                                                 <FeedbackButton icon={faThumbsUp}/>
                                                 <FeedbackButton icon={faThumbsDown}/>
                                             </Flex>
                                         </Flex>
-                                    </Card>
+                                    </Card>}
+                                    {item.Type === "ANSWER" && <Card className="answer-card">
+                                        <Flex
+                                            direction={{base: 'column', large: 'column'}}
+                                            padding="1rem"
+                                            style={{display: "block", margin: "10px auto", textAlign: "left"}}
+                                        >
+                                            <a rel="noreferrer" target="_blank"
+                                               href={item.DocumentURI}>{item.DocumentTitle.Text}</a>
+                                            <div>{highLightText(item.AdditionalAttributes[0].Value.TextWithHighlightsValue)}</div>
+                                            <Flex direction={{base: 'row'}}
+                                                  style={{margin: "15px 50px 0 auto", justifyContent: "right"}}>
+                                                <FeedbackButton icon={faThumbsUp}/>
+                                                <FeedbackButton icon={faThumbsDown}/>
+                                            </Flex>
+                                        </Flex>
+                                    </Card>}
                                 </li>;
                             })}
                         </ul>
