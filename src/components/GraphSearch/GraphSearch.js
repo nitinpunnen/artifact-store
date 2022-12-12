@@ -1,7 +1,17 @@
 import React, {useState} from "react";
 import "./GraphSearch.css";
 import "@aws-amplify/ui-react/styles.css";
-import {CheckboxField, Flex, Heading, SearchField, Table, TableBody, TableCell, TableRow} from '@aws-amplify/ui-react';
+import {
+    CheckboxField,
+    Flex,
+    Heading,
+    SearchField,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Text
+} from '@aws-amplify/ui-react';
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import {API} from "aws-amplify";
@@ -206,14 +216,19 @@ const GraphSearch = () => {
                     </ul>
                 </Flex>
                 {(chartOptions.series[0].data.length > 0) &&
-                    <HighchartsReact highcharts={Highcharts} options={chartOptions} containerProps={{
-                        style: {
-                            height: "600px",
-                            display: "block",
-                            width: "60%",
-                            margin: "0 auto",
-                        }
-                    }}/>}
+                    <Flex
+                        direction={{base: 'column', large: 'column'}} style={{height: "600px",display: "block", width: "60%", margin: "0 auto"}}>
+                        <Text variation="primary" fontSize="1.3em" fontStyle="normal"
+                              textDecoration="none" style={{textAlign: "center", color: "#d27018", marginBottom: "20px"}}>{resultItems[0]['name']} ({resultItems[0]['label']})</Text>
+                        <HighchartsReact highcharts={Highcharts} options={chartOptions} containerProps={{
+                            style: {
+                                height: "600px",
+                                display: "block",
+                                width: "100%",
+                                margin: "0 auto",
+                            }
+                        }}/>
+                    </Flex>}
                 <Flex
                     direction={{base: 'column', large: 'column'}}
                     padding="1rem"
@@ -232,7 +247,8 @@ const GraphSearch = () => {
                                 </TableCell>
                                 <TableCell>
                                     {(resultItems[0]['label'] === 'document' || resultItems[0]['label'] === 'drawing') && (
-                                        <a target='_blank' href={resultItems[0]['PreSignedURL']}>{resultItems[0]['name']}</a>
+                                        <a target='_blank'
+                                           href={resultItems[0]['PreSignedURL']}>{resultItems[0]['name']}</a>
                                     )}
                                     {(resultItems[0]['label'] !== 'document' && resultItems[0]['label'] !== 'drawing') && (
                                         <strong>{resultItems[0]['name']}</strong>
@@ -248,7 +264,7 @@ const GraphSearch = () => {
                                 </TableCell>
                             </TableRow>
                             {Object.keys(resultItems[0]).map(key => {
-                                if(key !== 'name' && key !== 'label' && key !== 'PreSignedURL') {
+                                if (key !== 'name' && key !== 'label' && key !== 'PreSignedURL') {
                                     return (
                                         <TableRow key={key}>
                                             <TableCell>
@@ -259,7 +275,8 @@ const GraphSearch = () => {
                                             </TableCell>
                                         </TableRow>
                                     );
-                                }})}
+                                }
+                            })}
                         </TableBody>
                     </Table>
                 </Flex>

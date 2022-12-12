@@ -11,7 +11,7 @@ import UploadFiles from "./components/UploadFiles/UploadFiles";
 import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 import SearchDocuments from "./components/SearchDocuments/SearchDocuments";
 import Home from "./components/Home/Home";
-import logoUrl from "./assets/logo.PNG";
+import logoUrl from "./assets/logo1.png";
 import GraphSearch from "./components/GraphSearch/GraphSearch";
 
 const App = ({signOut}) => {
@@ -33,7 +33,7 @@ const App = ({signOut}) => {
             <Flex
                 direction={{base: 'row', large: 'row'}}
                 width="100%"
-                style={{alignItems: "center", margin: "0 auto"}}
+                style={{alignItems: "center", margin: "0 20px"}}
             >
               <Link className="Navbar-Item" to="/">Home</Link>
               <Link className="Navbar-Item" to="/searchDocs">Search Documents</Link>

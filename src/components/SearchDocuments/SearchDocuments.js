@@ -239,8 +239,14 @@ const SearchDocuments = () => {
                                             padding="1rem"
                                             style={{display: "block", margin: "10px auto", textAlign: "left"}}
                                         >
+                                            <span style={{display: "block", fontWeight: "700", fontSize: "1.2em", margin: "10px 0"}}>{
+                                                item.AdditionalAttributes[0].Value.TextWithHighlightsValue.Text.substring(
+                                                    item.AdditionalAttributes[0].Value.TextWithHighlightsValue.Highlights[0].BeginOffset,
+                                                    item.AdditionalAttributes[0].Value.TextWithHighlightsValue.Highlights[0].EndOffset
+                                                )
+                                            }</span>
                                             <a rel="noreferrer" target="_blank"
-                                               href={item.DocumentURI}>{item.DocumentTitle.Text}</a>
+                                               href={item.HrefUri}>{item.DocumentTitle.Text}</a>
                                             <div>{highLightText(item.AdditionalAttributes[0].Value.TextWithHighlightsValue)}</div>
                                             <Flex direction={{base: 'row'}}
                                                   style={{margin: "15px 50px 0 auto", justifyContent: "right"}}>

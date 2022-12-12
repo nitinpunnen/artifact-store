@@ -5,7 +5,7 @@ import {API, Storage} from 'aws-amplify';
 import {
     Button, CheckboxField,
     Flex,
-    Heading, SelectField,
+    Heading, SearchField, SelectField,
     Table, TableBody, TableCell, TableHead, TableRow,
     TextField,
     View,
@@ -17,7 +17,7 @@ import {
 } from "../../graphql/mutations"
 
 const UploadFiles = () => {
-    const [artifacts, setArtifacts] = useState([]);
+    let [artifacts, setArtifacts] = useState([]);
     const [files, setFiles] = useState([]);
 
     useEffect(() => {
@@ -225,6 +225,13 @@ const UploadFiles = () => {
             </View>
             <Heading margin="3em 0 0 0" level={5}>Uploaded Files</Heading>
             <View margin="2em 0 0 0">
+                <SearchField
+                    label="Filter"
+                    placeholder="Filter..."
+                    onChange={(event) => {
+                        console.log(event.target.value)
+                    }}
+                />
                 <Table
                     className="upload-table"
                     caption=""

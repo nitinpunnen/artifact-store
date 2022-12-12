@@ -18,7 +18,7 @@ const Home = () => {
                 {/*    <source src={bgVideo}></source>*/}
                 {/*</video>*/}
                 <div className="intro">
-                    <Heading level={1} className="heading">Artifact Store</Heading>
+                    <Heading level={1} className="heading">Artifact Store - PoC</Heading>
                     <span className="short-desc">Powerful search engine build on machine learning capabilities to provide you the contextual results you are searching for. </span>
                 </div>
             </Flex>
