@@ -27,7 +27,7 @@ def handler(event, context):
 
 def search_kendra(query, attribute_filter):
     # Provide the index ID
-    index_id = "792dcbad-4ed1-4411-bf71-ec045e2f46d8"
+    index_id = "738f205f-415b-4e95-add0-36017ca5a1cd"
 
     result = kendra.query(
         QueryText=query,
